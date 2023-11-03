@@ -1,4 +1,4 @@
-build:
+build: format
 	go build .
 run: format build
 	./scnr
