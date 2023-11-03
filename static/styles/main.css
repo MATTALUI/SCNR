@@ -2,6 +2,8 @@
     --primary: #2F1B25;
     --light: #eeeeee;
     --dark: #111111;
+    --primary-trans: rgba(47, 27, 37, 0.69);
+    --primary-disabled: rgba(47, 27, 37, 0.25);
 }
 
 html, body {
@@ -23,10 +25,39 @@ main {
     display: flex;
 }
 
-aside {
+#controls {
     border: 1px solid rgba(17,17,17,0.25);
     border-radius: 5px;
     width: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem;
+}
+
+button {
+    border: none;
+    outline: none;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--primary-trans);
+    color: var(--light);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background-color 250ms;
+
+    &:hover {
+        background-color: var(--primary);
+    }
+    &[disabled] {
+        cursor: not-allowed;
+        background-color: var(--primary-disabled);
+    }
+}
+
+#capture-images {
+    width: 100%;
 }
 
 h1 {

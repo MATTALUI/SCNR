@@ -1,4 +1,35 @@
 (async () => {
+  class SCNRControls extends HTMLElement {
+    constructor() {
+      if (document.querySelector("#controls")) {
+        throw new Error("There can only be one instance of the controls available at once.");
+      }
+      super();
+      this.id = "controls";
+      this.captureImagesBtn = null;
+
+      this.buildElement();
+    }
+
+    buildElement() {
+      // Just spacer for now
+      this.appendChild(document.createElement('div'));
+      // Capture Images Block
+      const captureBlock = document.createElement('div');
+      this.captureImagesBtn = document.createElement('button');
+      this.captureImagesBtn.id = "capture-images";
+      this.captureImagesBtn.innerHTML = "Capture Images";
+      this.captureImagesBtn.addEventListener('click', this.captureImages);
+      captureBlock.appendChild(this.captureImagesBtn);
+      this.appendChild(captureBlock);
+    }
+
+    captureImages = async () => {
+      document.querySelector("preview-poller").replaceWith(new PseudoCarousel());
+      this.captureImagesBtn.disabled = true;
+    }
+  }
+
   class PseudoCarousel extends HTMLElement {
     constructor() {
       if (document.querySelector("#carousel")) {
@@ -131,5 +162,7 @@
 
   customElements.define("pseudo-carousel", PseudoCarousel);
   customElements.define("preview-poller", PreviewPoller);
+  customElements.define("scanner-controls", SCNRControls);
+  document.querySelector('main').appendChild(new SCNRControls());
   document.querySelector('main').appendChild(new PreviewPoller());
 })();
