@@ -47,6 +47,17 @@ body.grabbing {
     cursor: grabbing;
 }
 
+#preview {
+    flex: 1;
+    display: flex;
+    padding-left: 1rem;
+}
+
+#preview img {
+    max-width: 700px;
+    border-radius: 5px;
+}
+
 #carousel {
     flex: 1;
     display: flex;
