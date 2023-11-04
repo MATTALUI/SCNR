@@ -6,12 +6,18 @@
     --primary-disabled: rgba(47, 27, 37, 0.25);
 }
 
-html, body {
+html,
+body {
     padding: 0;
     margin: 0;
     background-color: var(--light);
     font-family: Arial, Helvetica, sans-serif;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+main {
+    flex: 1;
 }
 
 header {
@@ -20,19 +26,27 @@ header {
     padding: 0.5rem 2rem;
 }
 
-main {
+footer {
+    min-height: 3rem;
+    background-color: var(--primary-trans);
+    color: var(--light);
+    font-weight: 800;
+}
+
+#scanner {
     padding: 1rem;
     display: flex;
 }
 
 #controls {
-    border: 1px solid rgba(17,17,17,0.25);
+    border: 1px solid rgba(17, 17, 17, 0.25);
     border-radius: 5px;
     width: 400px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     padding: 1rem;
+    height: fit-content;
 }
 
 button {
@@ -50,9 +64,26 @@ button {
     &:hover {
         background-color: var(--primary);
     }
+
     &[disabled] {
         cursor: not-allowed;
         background-color: var(--primary-disabled);
+    }
+}
+
+#controls label {
+    font-weight: 800;
+    color: var(--dark);
+    margin-bottom: 0.125rem;
+}
+
+#controls>div {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+
+    &:last-child {
+        margin-bottom: 0;
     }
 }
 
@@ -67,6 +98,28 @@ h1 {
 
 .d-none {
     display: none !important;
+}
+
+.skeleton {
+    width: 100%;
+    min-height: 100px;
+    border-radius: 5px;
+    background-color: var(--primary);
+    animation: skeleton-loading 2s linear infinite alternate;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.skeleton>span {
+    text-transform: uppercase;
+    color: var(--light);
+    background-color: var(--dark);
+    border-radius: 5px;
+    font-weight: 800;
+    font-size: 2rem;
+    padding: 0.5rem 1rem;
+    opacity: 0.5;
 }
 
 h1 a {
@@ -104,4 +157,37 @@ body.grabbing {
 
 #carousel img.active {
     display: inline-block;
+}
+
+input[type="range"] {
+    appearance: none;
+    height: 5px;
+    background: #d3d3d3;
+    outline: none;
+    cursor: pointer;
+
+    &::-webkit-slider-thumb {
+        appearance: none;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 100%;
+        background: var(--primary-trans);
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--primary);
+        }
+    }
+}
+
+
+
+@keyframes skeleton-loading {
+    0% {
+        background-color: var(--primary-disabled);
+    }
+
+    100% {
+        background-color: var(--primary-trans);
+    }
 }

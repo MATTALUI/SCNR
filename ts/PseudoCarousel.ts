@@ -1,3 +1,5 @@
+import SkeletonLoader from "./SkeletonLoader";
+import { parseQueryparams } from "./utils";
 export class PseudoCarousel extends HTMLElement {
   projectId: string;
   images: string[];
@@ -11,14 +13,19 @@ export class PseudoCarousel extends HTMLElement {
     if (document.querySelector("#carousel")) {
       throw new Error("There can only be one instance of the carousel available at once.");
     }
+    const projectId = parseQueryparams().get("projectId");
+    if (!projectId) {
+      throw new Error("Could not parse project ID from search param");
+    }
     super();
     this.id = "carousel";
-    this.projectId = "test";
+    this.projectId = projectId;
     this.images = [];
     this.threshold = 25;
     this.activeIndex = 0;
     this.grabbing = false;
     this.delta = 0;
+    this.buildElement();
     this.populateProjectImages();
     this.registerHandlers();
   }
@@ -39,10 +46,15 @@ export class PseudoCarousel extends HTMLElement {
     console.log(`Attribute ${name} has changed. ${oldValue} -> ${newValue}`);
   }
 
+  buildElement() {
+    this.appendChild(new SkeletonLoader({ width: 700, height: 525, displayLoading: true }));
+  }
+
   async populateProjectImages() {
-    await new Promise(res => setTimeout(res, 1000)); // Simulate slow responses
+    await new Promise(res => setTimeout(res, 5000)); // Simulate slow responses
     const req = await fetch(`/api/images/${this.projectId}`);
     this.images = await req.json();
+    this.innerHTML = "";
     this.images.forEach((src, i) => {
       const image = document.createElement('img');
       image.src = src;

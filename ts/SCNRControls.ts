@@ -1,7 +1,9 @@
 import PseudoCarousel from "./PseudoCarousel";
+import { pushQueryParams } from "./utils";
 
 export class SCNRControls extends HTMLElement {
   captureImagesBtn: HTMLButtonElement|null;
+  lightLevelInput: HTMLInputElement|null;
 
   constructor() {
     if (document.querySelector("#controls")) {
@@ -10,13 +12,28 @@ export class SCNRControls extends HTMLElement {
     super();
     this.id = "controls";
     this.captureImagesBtn = null;
+    this.lightLevelInput = null;
 
     this.buildElement();
   }
 
   buildElement() {
-    // Just spacer for now
-    this.appendChild(document.createElement('div'));
+    // Light Level Block
+    const lightLevelBlock = document.createElement('div');
+    const lightLevelLabel = document.createElement('label')
+    lightLevelLabel.innerHTML = "Light Level";
+    lightLevelLabel.htmlFor = "light_level";
+    this.lightLevelInput = document.createElement('input');
+    this.lightLevelInput.type = "range";
+    this.lightLevelInput.min = "0";
+    this.lightLevelInput.max = "100"
+    this.lightLevelInput.value = "50";
+    this.lightLevelInput.step = "10";
+    this.lightLevelInput.name = "light_level";
+    this.lightLevelInput.addEventListener('change', this.setLightLevel);
+    lightLevelBlock.appendChild(lightLevelLabel);
+    lightLevelBlock.appendChild(this.lightLevelInput);
+    this.appendChild(lightLevelBlock);
     // Capture Images Block
     const captureBlock = document.createElement('div');
     this.captureImagesBtn = document.createElement('button');
@@ -29,8 +46,13 @@ export class SCNRControls extends HTMLElement {
 
   captureImages = async () => {
     if (!this.captureImagesBtn) return;
+    pushQueryParams({ projectId: "test" });
     document.querySelector("preview-poller")?.replaceWith(new PseudoCarousel());
     this.captureImagesBtn.disabled = true;
+  }
+
+  setLightLevel = async (e) => {
+    console.log(e.target.value);
   }
 }
 
