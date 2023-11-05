@@ -2,9 +2,11 @@ import { parseQueryparams } from "./utils";
 import PseudoCarousel from "./PseudoCarousel";
 import PreviewPoller from "./PreviewPoller";
 import SCNRControls from "./SCNRControls";
+import ProjectsSection from "./ProjectsSection";
 (async () => {
+  const mainEle = document.querySelector('main');
   const scannerEle = document.querySelector('#scanner');
-  if (!scannerEle) return;
+  if (!scannerEle || !mainEle) return;
   const queryParams = parseQueryparams();
 
   scannerEle.appendChild(new SCNRControls());
@@ -13,4 +15,6 @@ import SCNRControls from "./SCNRControls";
   } else {
     scannerEle.appendChild(new PreviewPoller());
   }
+
+  mainEle.appendChild(new ProjectsSection());
 })();

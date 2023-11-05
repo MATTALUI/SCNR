@@ -122,6 +122,20 @@ h1 {
     opacity: 0.5;
 }
 
+.project-tile {
+    display: inline-block;
+    margin-left: 0.5rem;
+    margin-top: 0.5rem;
+    cursor: pointer;
+    /* This will need to be changed when aspect ratios update */
+    height: 75px;
+}
+
+.project-tile > img {
+    max-width: 100px;
+    border-radius: 5px;
+}
+
 h1 a {
     text-decoration: none;
     color: var(--light);
@@ -153,6 +167,13 @@ body.grabbing {
     max-width: 700px;
     display: none;
     border-radius: 5px;
+}
+
+#project-section {
+    display: block;
+    border-top: 1px solid var(--primary-trans);
+    padding-bottom: 1rem;
+    height: fit-content;
 }
 
 #carousel img.active {

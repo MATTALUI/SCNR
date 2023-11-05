@@ -52,7 +52,7 @@ export class PseudoCarousel extends HTMLElement {
 
   async populateProjectImages() {
     await new Promise(res => setTimeout(res, 5000)); // Simulate slow responses
-    const req = await fetch(`/api/images/${this.projectId}`);
+    const req = await fetch(`/api/projects/${this.projectId}/images`);
     this.images = await req.json();
     this.innerHTML = "";
     this.images.forEach((src, i) => {
