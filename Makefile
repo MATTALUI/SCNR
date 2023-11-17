@@ -4,13 +4,13 @@ run: build
 	./scnr
 run-dev: format
 	go build .
-	concurrently "./scnr" "bun build ./ts/main.ts --outfile ./static/js/main.js --watch"
+	concurrently "./scnr" "bun build ./ui/targets/*.ts --outdir ./static/js/ --minify --watch"
 format:
 	go fmt .
-build-ui: main.js
-main.js:
-	bun build --minify ./ts/main.ts --outfile ./static/js/main.js
+build-ui:
+	bun build ./ui/targets/*.ts --outdir ./static/js/ --minify
 install:
 	bun install -g concurrently
+	go mod download
 clean:
 	rm ./static/js/main.js 
