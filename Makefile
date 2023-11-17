@@ -1,6 +1,6 @@
 export GOMOD=./src/go.mod
 
-build: format build-ui
+build: format
 	go build -o ./scnr ./src/service
 run: build
 	./scnr
