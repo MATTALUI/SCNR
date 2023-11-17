@@ -35,7 +35,7 @@ func init() {
 func main() {
 	app := fiber.New()
 	go GeneratePreviews()
-	app.Static("/", "./static")
+	app.Static("/", "./src/static") // relative tot he root of the project
 	app.Get("/api/projects/", HandleGetProjects)
 	app.Get("/api/projects/:projectId/images", HandleGetProjectImages)
 	app.Get("/api/preview", HandleGetPreview)
@@ -44,7 +44,7 @@ func main() {
 
 func HandleGetProjects(c *fiber.Ctx) error {
 	projects := make([]Project, 0)
-	files, err := ioutil.ReadDir("./static/assets/projects")
+	files, err := ioutil.ReadDir("./src/static/assets/projects")
 	if err != nil {
 		return err
 	}

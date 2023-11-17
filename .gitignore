@@ -1,2 +1,2 @@
 scnr
-static/js/main.js
+src/static/js/*.js

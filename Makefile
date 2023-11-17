@@ -1,16 +1,18 @@
+export GOMOD=./src/go.mod
+
 build: format build-ui
-	go build .
+	go build -o ./scnr ./src/service
 run: build
 	./scnr
-run-dev: format
-	go build .
-	concurrently "./scnr" "bun build ./ui/targets/*.ts --outdir ./static/js/ --minify --watch"
+run-dev: build
+	concurrently "./scnr" "bun build ./src/ui/targets/*.ts --outdir ./src/static/js/ --minify --watch"
 format:
-	go fmt .
+	go fmt ./src/service
 build-ui:
-	bun build ./ui/targets/*.ts --outdir ./static/js/ --minify
+	bun build ./src/ui/targets/*.ts --outdir ./src/static/js/ --minify
 install:
 	bun install -g concurrently
 	go mod download
 clean:
-	rm ./static/js/main.js 
+	rm -f ./scnr
+	rm -f ./src/static/js/*.js
