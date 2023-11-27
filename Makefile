@@ -13,7 +13,8 @@ build-ui:
 install:
 	bun install -g concurrently
 	go mod download
-clean:
+clean: clean-previews
 	rm -f ./scnr
 	rm -f ./src/static/js/*.js
+clean-previews:
 	rm -f ./src/static/preview-*.jpg

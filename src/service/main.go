@@ -118,7 +118,7 @@ func GeneratePreviews() {
 		newPreviewName := fmt.Sprintf("/preview-%d-%s.jpg", time.Now().Unix(), uuid.NewString())
 		outputPath := fmt.Sprintf("%s/src/static%s", currentDir, newPreviewName)
 
-		_, err := exec.Command("raspistill", "-o", outputPath).Output()
+		_, err := exec.Command("raspistill", "--timeout", "690", "-o", outputPath).Output()
 		if err != nil {
 			fmt.Println("An error occurred while taking a preview still")
 			panic(err)
