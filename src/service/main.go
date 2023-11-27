@@ -18,15 +18,14 @@ type Project struct {
 }
 
 var (
-	images           []string
-	previewIndex     int
+	testImages       []string
 	previewSnapshots []string
 	isPiLive         bool
 )
 
 func init() {
 	isPiLive = runtime.GOOS == "linux"
-	images = []string{
+	testImages = []string{
 		"/assets/projects/test/0.jpg",
 		"/assets/projects/test/1.jpg",
 		"/assets/projects/test/2.jpg",
@@ -73,7 +72,26 @@ func HandleGetProjects(c *fiber.Ctx) error {
 }
 
 func HandleGetProjectImages(c *fiber.Ctx) error {
-	data, err := json.Marshal(images)
+	projectId := c.Params("projectId")
+	currentDir, err := os.Getwd()
+	projectPath := fmt.Sprintf("%s/src/static/assets/projects/%s", currentDir, projectId)
+	if _, err := os.Stat(projectPath); err != nil && os.IsNotExist(err) {
+		// The project does not exist
+		c.Status(404)
+		c.SendString("")
+	}
+	files, err := os.ReadDir(projectPath)
+	if err != nil {
+		return err
+	}
+	projectImages := make([]string, len(files))
+	fmt.Println(projectPath)
+	for i, file := range files {
+		imgName := fmt.Sprintf("/assets/projects/%s/%s", projectId, file.Name())
+		projectImages[i] = imgName
+	}
+
+	data, err := json.Marshal(projectImages)
 	if err != nil {
 		return err
 	}
@@ -82,7 +100,7 @@ func HandleGetProjectImages(c *fiber.Ctx) error {
 
 func HandleGetPreview(c *fiber.Ctx) error {
 	if len(previewSnapshots) == 0 {
-		return c.SendString(images[0])
+		return c.SendString("")
 	}
 	return c.SendString(previewSnapshots[0])
 }
