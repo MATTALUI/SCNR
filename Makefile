@@ -1,6 +1,6 @@
 export GOMOD=./src/go.mod
 
-build: format build-ui
+build: format
 	go build -o ./scnr ./src/service
 run: build
 	./scnr
@@ -16,3 +16,4 @@ install:
 clean:
 	rm -f ./scnr
 	rm -f ./src/static/js/*.js
+	rm -f ./src/static/preview-*.jpg

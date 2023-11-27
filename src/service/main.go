@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"io/ioutil"
+	"os"
+	"os/exec"
 	"time"
 )
 
@@ -14,12 +17,12 @@ type Project struct {
 }
 
 var (
-	images       []string
-	previewIndex int
+	images           []string
+	previewIndex     int
+	previewSnapshots []string
 )
 
 func init() {
-	previewIndex = 0
 	images = []string{
 		"/assets/projects/test/0.jpg",
 		"/assets/projects/test/1.jpg",
@@ -30,12 +33,13 @@ func init() {
 		"/assets/projects/test/6.jpg",
 		"/assets/projects/test/7.jpg",
 	}
+	previewSnapshots = make([]string, 0)
 }
 
 func main() {
 	app := fiber.New()
 	go GeneratePreviews()
-	app.Static("/", "./src/static") // relative tot he root of the project
+	app.Static("/", "./src/static") // relative to the root of the project
 	app.Get("/api/projects/", HandleGetProjects)
 	app.Get("/api/projects/:projectId/images", HandleGetProjectImages)
 	app.Get("/api/preview", HandleGetPreview)
@@ -72,15 +76,50 @@ func HandleGetProjectImages(c *fiber.Ctx) error {
 }
 
 func HandleGetPreview(c *fiber.Ctx) error {
-	return c.SendString(images[previewIndex])
+	if len(previewSnapshots) == 0 {
+		return c.SendString("/preview-1701031254-5e60e540-4b07-492e-8a2e-60701ef49cb4.jpg")
+	}
+	return c.SendString(previewSnapshots[0])
 }
 
 func GeneratePreviews() {
+	// Clear out old previews here
+	currentDir, err := os.Getwd()
+	//fmt.Println(fmt.Sprintf("%s/src/static/preview-*.jpg", currentDir))
+	//_, err = exec.Command("rm", "-f", fmt.Sprintf("%s/src/static/preview-*.jpg", currentDir)).Output()
+	if err != nil {
+		fmt.Println("Could not clean up the existing previews")
+		panic(err)
+	}
 	for {
-		time.Sleep(time.Duration(200) * time.Millisecond)
-		previewIndex++
-		if previewIndex == len(images) {
-			previewIndex = 0
+		newPreviewName := fmt.Sprintf("/preview-%d-%s.jpg", time.Now().Unix(), uuid.NewString())
+		outputPath := fmt.Sprintf("%s/src/static%s", currentDir, newPreviewName)
+
+		_, err := exec.Command("raspistill", "-o", outputPath).Output()
+		if err != nil {
+			fmt.Println("An error occurred while taking a preview still")
+			panic(err)
 		}
+
+		newSnapshots := []string{newPreviewName}
+
+		for index, snapshot := range previewSnapshots {
+			if index < 3 {
+				newSnapshots = append(newSnapshots, snapshot)
+			} else {
+				go DeleteSnapshot(snapshot)
+			}
+		}
+		previewSnapshots = newSnapshots
+		//time.Sleep(time.Duration(300) * time.Millisecond)
+	}
+}
+
+func DeleteSnapshot(snapshot string) {
+	currentDir, err := os.Getwd()
+	_, err = exec.Command("rm", fmt.Sprintf("%s/src/static%s", currentDir, snapshot)).Output()
+	if err != nil {
+		fmt.Printf("Could not delete snapshot: %s\n", snapshot)
+		panic(err)
 	}
 }
