@@ -4,7 +4,6 @@ import PreviewPoller from "../PreviewPoller";
 import SCNRControls from "../SCNRControls";
 import ProjectsSection from "../ProjectsSection";
 (async () => {
-  console.log("hello!");
   const mainEle = document.querySelector('main');
   const scannerEle = document.querySelector('#scanner');
   if (!scannerEle || !mainEle) return;

@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"runtime"
 	"time"
 )
 
@@ -20,9 +21,11 @@ var (
 	images           []string
 	previewIndex     int
 	previewSnapshots []string
+	isPiLive         bool
 )
 
 func init() {
+	isPiLive = runtime.GOOS == "linux"
 	images = []string{
 		"/assets/projects/test/0.jpg",
 		"/assets/projects/test/1.jpg",
@@ -38,7 +41,9 @@ func init() {
 
 func main() {
 	app := fiber.New()
-	go GeneratePreviews()
+	if isPiLive {
+		go GeneratePreviews()
+	}
 	app.Static("/", "./src/static") // relative to the root of the project
 	app.Get("/api/projects/", HandleGetProjects)
 	app.Get("/api/projects/:projectId/images", HandleGetProjectImages)
@@ -77,7 +82,7 @@ func HandleGetProjectImages(c *fiber.Ctx) error {
 
 func HandleGetPreview(c *fiber.Ctx) error {
 	if len(previewSnapshots) == 0 {
-		return c.SendString("/preview-1701031254-5e60e540-4b07-492e-8a2e-60701ef49cb4.jpg")
+		return c.SendString(images[0])
 	}
 	return c.SendString(previewSnapshots[0])
 }

@@ -2,6 +2,7 @@ export class PreviewPoller extends HTMLElement {
   polling: boolean;
   imgEle: HTMLImageElement | null;
   interval: number | null;
+  failures: number;
 
   constructor() {
     if (document.querySelector("#preview")) {
@@ -12,6 +13,7 @@ export class PreviewPoller extends HTMLElement {
     this.interval = null;
     this.imgEle = null;
     this.polling = false;
+    this.failures = 0;
 
     this.buildElement();
     this.startInterval();
@@ -29,7 +31,7 @@ export class PreviewPoller extends HTMLElement {
 
   startInterval() {
     if (this.polling) return;
-    this.interval = setInterval(this.getNextImage, 200);
+    this.interval = setInterval(this.getNextImage, 690);
     this.polling = true;
   }
 
@@ -42,10 +44,20 @@ export class PreviewPoller extends HTMLElement {
 
   getNextImage = async () => {
     if (!this.imgEle) return;
-    const req = await fetch("/api/preview");
-    const imgSrc = await req.text();
+    try {
+      const req = await fetch("/api/preview");
+      const imgSrc = await req.text();
+      if (req.status !== 200) throw new Error("Non 200 status code: " + imgSrc);
 
-    this.imgEle.src = imgSrc;
+
+      this.imgEle.src = imgSrc;
+    } catch (e) {
+      console.error(e);
+      this.failures++;
+      if (this.failures > 3) {
+        this.stopInterval();
+      }
+    }
   }
 }
 customElements.define("preview-poller", PreviewPoller);
