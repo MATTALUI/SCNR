@@ -48,13 +48,14 @@ export class PreviewPoller extends HTMLElement {
       const req = await fetch("/api/preview");
       const imgSrc = await req.text();
       if (req.status !== 200) throw new Error("Non 200 status code: " + imgSrc);
-
+      if (!imgSrc) throw new Error("Empty image result");
 
       this.imgEle.src = imgSrc;
+      this.failures = 0;
     } catch (e) {
       console.error(e);
       this.failures++;
-      if (this.failures > 3) {
+      if (this.failures >= 10) {
         this.stopInterval();
       }
     }

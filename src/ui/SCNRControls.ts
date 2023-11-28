@@ -1,4 +1,6 @@
+import ProjectTile from "./ProjectTile";
 import PseudoCarousel from "./PseudoCarousel";
+import { Project } from "./types";
 import { pushQueryParams } from "./utils";
 
 export class SCNRControls extends HTMLElement {
@@ -46,8 +48,16 @@ export class SCNRControls extends HTMLElement {
 
   captureImages = async () => {
     if (!this.captureImagesBtn) return;
-    pushQueryParams({ projectId: "test" });
+
+    const req = await fetch('/api/projects/', {
+      method: "POST"
+    });
+    const project: Project = await req.json();
+    console.table(project);
+
+    pushQueryParams({ projectId: project.id });
     document.querySelector("preview-poller")?.replaceWith(new PseudoCarousel());
+    document.querySelector("#project-section")?.appendChild(new ProjectTile({ project }));
     this.captureImagesBtn.disabled = true;
   }
 

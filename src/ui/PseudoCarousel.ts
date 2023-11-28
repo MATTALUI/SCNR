@@ -1,5 +1,6 @@
 import SkeletonLoader from "./SkeletonLoader";
-import { parseQueryparams } from "./utils";
+import PreviewPoller from "./PreviewPoller";
+import { parseQueryparams, pushQueryParams } from "./utils";
 export class PseudoCarousel extends HTMLElement {
   projectId: string;
   images: string[];
@@ -53,6 +54,11 @@ export class PseudoCarousel extends HTMLElement {
   async populateProjectImages() {
     await new Promise(res => setTimeout(res, 690)); // Simulate slow responses
     const req = await fetch(`/api/projects/${this.projectId}/images`);
+    if (req.status === 404) {
+      pushQueryParams({ projectId: undefined });
+      this.replaceWith(new PreviewPoller());
+      return;
+    }
     this.images = await req.json();
     this.innerHTML = "";
     this.images.forEach((src, i) => {

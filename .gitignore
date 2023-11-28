@@ -1,5 +1,6 @@
 scnr
 src/static/js/*.js
+src/static/assets/projects
 src/static/preview-*.jpg
 # These .jpg~ are artifacts that get created when a process is killed in the middle of a preview capture
 src/static/preview-*.jpg~
